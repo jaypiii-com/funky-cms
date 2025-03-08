@@ -1,0 +1,3 @@
+id,username,email,password,account_type,created_by,created_at,active
+67cc49451c71c4.20311399,funky,admin@funky-cms.de,$2y$12$wfKt0xMC..k2bSCsEP2Lz.sCuXLgLspUq6oknvL7mdTF8cpM/awPW,admin,system,2025-03-08 13:00:42,true
+67cc78d9d82223.58105657,jp,jp@funky-cms.de,$2y$12$wfKt0xMC..k2bSCsEP2Lz.sCuXLgLspUq6oknvL7mdTF8cpM/awPW,admin,system,2025-03-08 13:00:42,false
