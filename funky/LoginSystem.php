@@ -4,8 +4,6 @@ class LoginSystem
 {
     private static $instance = null;
     private const CSV_FILE = __DIR__.'/users.csv';
-    private const LOGIN_TARGET = '/admin'; // Redirect target after successful login
-    private const LOGOUT_TARGET = '/logout'; // Redirect target after logout
     private $users = [];
 
     private function __construct()
@@ -62,17 +60,13 @@ class LoginSystem
         if ($this->isFormSubmitted()) {
             if ($this->checkCredentials($_POST['identifier'], $_POST['password'])) {
                 $this->redirectAfterLogin();
+                session_regenerate_id(true);
                 return 'Login erfolgreich';
             }
 
             $_SESSION['login_error'] = 'Login fehlgeschlagen';
             header('Refresh: 0');
             exit;
-        }
-
-        if ($this->isLoggedIn()) {
-            $userData = $this->getUserData($_SESSION['user_id']);
-            return $this->renderLogoutLink() . $this->displayUserData($userData);
         }
 
         return $this->renderForm() . $this->displayError();
@@ -90,7 +84,7 @@ class LoginSystem
 
     private function redirectAfterLogin(): void
     {
-        header('Location: ' . self::LOGIN_TARGET);
+        header('Location: ' . LOGIN_TARGET);
         exit;
     }
 
@@ -105,12 +99,18 @@ class LoginSystem
         $password = htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8');
 
         return '
-            <form method="post">
-                <label for="identifier">Username oder Email</label>
-                <input type="text" name="identifier" placeholder="Username oder Email" value="' . $identifier . '" required>
-                <label for="password">Password</label>
-                <input type="password" name="password" placeholder="Password" value="' . $password . '" required>
-                <input type="submit" value="Login">
+            <form method="post" class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+            <div class="mb-4">
+                <label for="identifier" class="block text-gray-700 font-semibold mb-2">Username oder Email</label>
+                <input type="text" name="identifier" placeholder="Username oder Email" value="' . $identifier . '" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+                <input type="password" name="password" placeholder="Password" value="' . $password . '" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="flex items-center justify-between">
+                <input type="submit" value="Login" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            </div>
             </form>
         ';
     }
@@ -130,7 +130,7 @@ class LoginSystem
 
     private function redirectAfterLogout(): void
     {
-        header('Location: ' . self::LOGOUT_TARGET);
+        header('Location: ' . LOGOUT_TARGET);
         exit;
     }
 
@@ -139,23 +139,6 @@ class LoginSystem
         return $this->users[$userId] ?? null;
     }
 
-    private function displayUserData(array $userData): string
-    {
-        if ($userData) {
-            return '
-                <div>
-                    <h2>Benutzerdaten</h2>
-                    <p>Username: ' . htmlspecialchars($userData['username']) . '</p>
-                    <p>Email: ' . htmlspecialchars($userData['email']) . '</p>
-                    <p>Account-Typ: ' . htmlspecialchars($userData['account_type']) . '</p>
-                    <p>Erstellt von: ' . htmlspecialchars($userData['created_by']) . '</p>
-                    <p>Erstellt am: ' . htmlspecialchars($userData['created_at']) . '</p>
-                    <p>Aktiv: ' . htmlspecialchars($userData['active']) . '</p>
-                </div>
-            ';
-        }
-        return '<p>Keine Benutzerdaten gefunden.</p>';
-    }
 
     public function checkAccess(): void
     {
