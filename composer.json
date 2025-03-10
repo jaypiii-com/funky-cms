@@ -1,0 +1,15 @@
+{
+    "name": "jaypiii/funky-cms",
+    "autoload": {
+        "psr-4": {
+            "FunkyCMS\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jaypiii",
+            "email": "behrens.de@icloud.com"
+        }
+    ],
+    "require": {}
+}
